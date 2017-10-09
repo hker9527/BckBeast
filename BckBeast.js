@@ -4,12 +4,13 @@ const http = require("http");
 const https = require("https");
 const vorpal = require('vorpal')();
 const sqlite3 = require("sqlite3");
-const Long = require('long');
+
+const CredInfo = require("./cred.js");
 
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
-client.login('MzY0MDk3NDY1MDEzNzY0MDk3.DLK7FA.BnYWJCamIwM7djHvpTmrKEGSdv4');
+client.login(CredInfo.API_KEY);
 
 function quit() {
     client.destroy();

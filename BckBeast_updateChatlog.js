@@ -5,9 +5,11 @@ const Long = require('long');
 const Discord = require('discord.js');
 const client = new Discord.Client();
 
+const CredInfo = require("./cred.js");
+
 const SFUtil = require("./sfutil.js");
 
-client.login('MzY0MDk3NDY1MDEzNzY0MDk3.DLK7FA.BnYWJCamIwM7djHvpTmrKEGSdv4');
+client.login(CredInfo.API_KEY);
 
 client.on("ready", () => {
     return;
