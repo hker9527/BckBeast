@@ -108,4 +108,12 @@ client.on('message', message => {
         default:
             break;
     }
+    db.run("insert into message values (?, ?, ?, ?)", message.id, message.cleanContent, authorNick, message.channel.id, (e) => {
+         var attachments = message.attachments.array();
+         if (attachments.length) {
+             for (var a in attachments) {
+                 db.run("insert into attachment values (?, ?)", message.id, a.url, (e) => {});
+             }
+         }
+    });
 });
