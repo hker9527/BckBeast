@@ -12,6 +12,8 @@ const client = new Discord.Client();
 
 client.login(CredInfo.API_KEY);
 
+const logfile = "logs/BckBeast.log";
+
 function quit() {
     client.destroy();
     console.log("Bot closed.");
@@ -22,6 +24,7 @@ function report(msg) {
     var txt = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '');
     txt = txt + "\t" + msg;
     vorpal.log(txt);
+    fs.appendFile(logfile, txt + "\n", () => {})
     return true;
 }
 
@@ -39,18 +42,15 @@ client.on('ready', () => {
     });
 });
 
-vorpal.command('echo <var...>', 'echo variable value.').action((args, cb) => {
+vorpal.mode('eval').delimiter('<eval>').description("Enter evaluation mode.").init((a, cb) => {
+    vorpal.log("You are now in evaluation mode.\n Type `exit` to exit.")
+    cb();
+}).action((a, cb) => {
     try {
-        var _var = args.var
-        for (var a in _var) {
-            if (_var[a].indexOf("(") > 0) {
-                vorpal.log(_var[a])
-            }
-            vorpal.log(eval(_var[a]));
-        }
+        vorpal.log(eval(a));
         cb();
     } catch (e) {
-        report(e.toString())
+        vorpal.log(e.toString())
     }
 });
 // [ '361847638833758219', '342372275305054210' ]
@@ -70,6 +70,7 @@ vorpal.command('echo <var...>', 'echo variable value.').action((args, cb) => {
         -> cleanContent
         -> created
 
+    client.guilds.array()[1].channels.find("name", "general").fetchMessages({before: 363837417062531073}).then(a => {console.log(a.array().length)})
 */
 
 
@@ -80,7 +81,14 @@ client.on('message', message => {
     if (message.author != client.user) {
         global.message = message;
     }
-    report(message.author.username + ": " + message.content);
+    try {
+        var authorNick = message.channel.members.find("user", message.author).nickname
+        if (authorNick == null) throw e;
+    } catch (e) {
+        var authorNick = message.author.username;
+    } finally {
+        report(message.channel.name + " => " + authorNick + ": " + message.cleanContent);
+    }
     var msg = message.content.split(" ");
     switch (msg[0]) {
         case "b!ping":
@@ -95,29 +103,6 @@ client.on('message', message => {
             message.channel.send("```\n" + txt + "```");
             break;
         case "b!export":
-            /*if (msg.length < 4) {
-                message.channel.send("!export [channelID] [from] [to]")
-            }*/
-            var channelIndex = parseInt(msg[1]);
-            var from = 1506965765650
-            var to = 1506965844806
-            var channel = channelName[channelIndex];
-            message.reply()
-            // use SQL table to store
-            function findMessage(from = null, to = null) {
-                var msgs = channel.fetchMessages({
-                    limit: 100
-                }).then(messages => {
-                    for (var i in messages) {
-                        if (messages[i].createdTimestamp < to) {
-                            global.msgTo = messages[i];
-                        }
-                    }
-                    return findMessage()
-                })
-            }
-
-
 
             break;
         default:
