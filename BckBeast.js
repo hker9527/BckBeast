@@ -114,7 +114,7 @@ client.on('message', message => {
          var attachments = message.attachments.array();
          if (attachments.length) {
              for (var a in attachments) {
-                 db.run("insert into attachment values (?, ?)", message.id, a.url, (e) => {
+                 db.run("insert into attachment values (?, ?)", message.id, attachments[a].url, (e) => {
                     if (e) vorpal.log(e.toString());
                  });
              }
