@@ -4,6 +4,7 @@ const http = require("http");
 const https = require("https");
 const vorpal = require('vorpal')();
 const sqlite3 = require("sqlite3");
+const db = new sqlite3.Database("chat.db");
 
 const CredInfo = require("./cred.js");
 
